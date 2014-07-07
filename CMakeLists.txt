@@ -38,6 +38,7 @@ add_executable(z80e${ExecutableSuffix}
     disassembler/disassemble.c
     ti/asic.c
     ti/memory.c
+    runloop.c
     ${Hardware}
     ${Commands}
     ${Shims}

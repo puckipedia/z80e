@@ -11,6 +11,7 @@
 #include <signal.h>
 
 #include "hooks.h"
+#include "runloop.h"
 
 typedef struct {
     ti_device_type device;
@@ -21,6 +22,7 @@ typedef struct {
     int stop;
     int debugger;
     int no_rom_check;
+    runloop_state_t *runloop;
 } appContext_t;
 
 appContext_t context;
@@ -235,6 +237,8 @@ int main(int argc, char **argv) {
 
     asic_t *device = asic_init(context.device);
     context.device_asic = device;
+
+    context.runloop = runloop_init(device);
     if (context.rom_file == NULL) {
         printf("Warning: No ROM file specified, starting debugger\n");
         context.debugger = 1;
