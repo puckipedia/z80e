@@ -65,13 +65,21 @@ void runloop_tick_cycles(runloop_state_t *state, int cycles) {
 	for (i = 0; i < state->asic->max_timer; i++) {
 		z80_timer_t *timer = &state->asic->timers[i];
 		timer_info_t *info = &state->timers_info[i];
-		if (info->cycles_until_tick < cycles) {
+
+		int tot_cycles = cycles;
+
+		if (info->cycles_until_tick < tot_cycles) {
+			retry:
 			ticks[current_tick].index = i;
 			ticks[current_tick].after_cycle = info->cycles_until_tick;
+			tot_cycles -= info->cycles_until_tick;
 			info->cycles_until_tick = state->asic->clock_rate / timer->frequency;
 			current_tick++;
+			if (info->cycles_until_tick <= tot_cycles) {
+				goto retry;
+			}
 		} else {
-			info->cycles_until_tick -= cycles;
+			info->cycles_until_tick -= tot_cycles;
 		}
 	} // TODO: Multiple timer ticks per runloop tick
 
@@ -113,6 +121,5 @@ void runloop_tick(runloop_state_t *state) {
 		return;
 
 	runloop_tick_cycles(state, cycles);
-
 	state->last_end = now;
 }
