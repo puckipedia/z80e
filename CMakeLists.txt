@@ -68,6 +68,9 @@ ELSE()
     TARGET_LINK_LIBRARIES(tests${ExecutableSuffix} readline)
 ENDIF()
 
+target_link_libraries(z80e${ExecutableSuffix} rt)
+target_link_libraries(tests${ExecutableSuffix} rt)
+
 include_directories(
     core/
     debugger/
